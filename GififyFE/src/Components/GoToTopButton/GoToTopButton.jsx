@@ -1,35 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { gsap } from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
+gsap.registerPlugin(ScrollToPlugin);
 
 const GoToTopButton = () => {
   const [visible, setVisible] = useState(false);
 
-  // Show button when scroll Y is more than 300px
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
+      setVisible(window.pageYOffset > 300);
     };
 
     window.addEventListener('scroll', toggleVisibility);
-
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  // GSAP animation on visible change
   useEffect(() => {
-    if (visible) {
-      gsap.to('#goTopBtn', { duration: 0.4, opacity: 1, y: 0, pointerEvents: 'auto', ease: 'power3.out' });
-    } else {
-      gsap.to('#goTopBtn', { duration: 0.4, opacity: 0, y: 50, pointerEvents: 'none', ease: 'power3.in' });
-    }
+    gsap.to('#goTopBtn', {
+      duration: 0.4,
+      opacity: visible ? 1 : 0,
+      y: visible ? 0 : 50,
+      pointerEvents: visible ? 'auto' : 'none',
+      ease: 'power3.out',
+    });
   }, [visible]);
 
   const scrollToTop = () => {
-    gsap.to(window, { duration: 1, scrollTo: 0, ease: "power2.inOut" });
+    gsap.to(window, {
+      duration: 1,
+      scrollTo: { y: 0, autoKill: true },
+      ease: 'power2.inOut',
+    });
   };
 
   return (
@@ -72,4 +74,3 @@ const GoToTopButton = () => {
 };
 
 export default GoToTopButton;
-
